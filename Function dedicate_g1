@@ -1,10 +1,20 @@
+# Function that solves for the number of bonds that should be purchased given the price of each bond, the coupon for each bond
+# the maturity for each bond and the liabilities each year. 
+# Only constraint that must be followed while inputting the arrays are: the maturity year of the last bond should be equal to the number 
+# of years of liabilities. This means we need some form of income/coupon from each bond till our liabilities are over. 
+# Inputs: P-> array of prices 
+# C-> Array of coupons
+# M->array of maturity
+# L-> Array of liabilites
 library('lpSolveAPI')
 dedicate_g1<-function(P,C,M,L)
-{ year=max(M)
+{ # year is also equal to the number of years till we have liability
+year=max(M)
+# decision variables are the number of bonds 
 decision_variables<-length(P)
-#lpmodel<-make.lp(0,0)
+# converting the liabilites array to a dataframe (This is actually of no use in our code)
 train<-as.data.frame(L)
-#print (train)
+
 
 ## Creating the constraint dataframe
 maturity_coupons<-matrix(0,length(P),year)
