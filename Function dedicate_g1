@@ -1,0 +1,46 @@
+library('lpSolveAPI')
+dedicate_g1<-function(P,C,M,L)
+{ year=max(M)
+decision_variables<-length(P)
+#lpmodel<-make.lp(0,0)
+train<-as.data.frame(L)
+#print (train)
+
+## Creating the constraint dataframe
+maturity_coupons<-matrix(0,length(P),year)
+coupons<-matrix(0,length(P),year)
+for (i in c(1:length(P)))
+{ #print (i,M[i])
+  maturity_coupons[i,M[i]]=100
+}
+#print (maturity_coupons)
+for (i in c(1:length(P)))
+{
+  for (j in c(1:M[i])){
+    coupons[i,j]=C[i]
+  }
+}
+inflow<-maturity_coupons+coupons
+inflow<-t(inflow)
+#mat=diag(-1,length(L))
+#inflow<-cbind(inflow,mat)
+inflow<-as.data.frame(inflow)
+lpmodel<-make.lp(0,decision_variables)
+
+
+# inflow is the constraint dataframe
+
+# print (inflow)
+# print (train)
+for (i in seq(1:nrow(inflow)))
+{ xt=inflow[i, ]
+add.constraint(lpmodel,xt,">=",L[i])
+print ("loop entered")
+}
+#print (inflow)
+set.objfn(lpmodel,P)
+solve(lpmodel)
+print (get.objective(lpmodel))
+print (get.variables(lpmodel))
+print (lpmodel)
+}
