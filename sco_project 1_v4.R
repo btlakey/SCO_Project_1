@@ -186,5 +186,90 @@ dedicate_g1_noz(p,c,m,l)
 
 
 
+setwd("C:/Users/brian/Desktop/MS-BA/03 Spring Semester/Stochastic Control and Optimization/sco_project 1")
+bonds = read.csv('treasury_bonds.csv', header=TRUE)
+names(bonds)
+
+p = bonds['Asked'] #price
+c = bonds['Coupon'] #coupon
+m = c(1,2,2,3,4,5,5,6,7,8) #maturity
+l = c(9000000,9000000,10000000,10000000,6000000,6000000,9000000,9000000,10000000,10000000,5000000,3000000) #liabilities (RHS)
+
+
+#creating a column of day counts from a date in 1970
+#bonds['Matur_Date'] = 0
+bonds$Matur_Date = as.Date(as.character(bonds$Maturity),format="%m/%d/%Y")
+
+#list of liability dates
+liability_dates = c('6/30/2016','12/31/2016','6/30/2017','12/31/2017','6/30/2018','12/31/2018','6/30/2019',
+                    '12/31/2019','6/30/2020','12/31/2020','6/30/2021','12/31/2021')
+#list of liability day counts
+liability_date = as.Date(liability_dates,format="%m/%d/%Y")
+
+#portfolio start day count
+start_date = as.Date("12/31/2015", format="%m/%d/%Y")
+
+portfolio_date = c(start_date,liability_date)
+
+
+for (i in c(1:length(bonds))) {
+  t = 0
+  for (j in c(1:length(portfolio_date))) {
+    if bonds$Matur_Date[i] > portfolio_date[i] && bonds$Matur_Date[i] <= portfolio_date[i+1]
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######
+# weird date count shit
+######
+
+#as.Date("3/15/2016", format="%m/%d/%Y")
+#literally no idea when this will work and won't work
+
+#creating a column of day counts from a date in 1970
+bonds['Matur_Date'] = 0
+for (i in c(1:length(bonds$Maturity))) {
+  bonds$Matur_Date[i] = as.Date(as.character(bonds$Maturity[i]),format="%m/%d/%Y")
+}
+#bonds$Matur_Date = as.Date(as.character(bonds$Maturity),format="%m/%d/%Y")
+
+
+#list of liability dates
+liability_dates = c('6/30/2016','12/31/2016','6/30/2017','12/31/2017','6/30/2018','12/31/2018','6/30/2019',
+                    '12/31/2019','6/30/2020','12/31/2020','6/30/2021','12/31/2021')
+liability_count = c()
+#list of liability day counts
+for (i in c(1:length(liability_dates))) {
+  liability_count[i] = as.Date(as.character(liability_dates[i]),format="%m/%d/%Y")
+}
+
+#portfolio start day count
+start_day = "12/31/2015"
+start_count = c()
+for (i in c(1:length(start_day))) {
+  start_count[i] = as.Date(start_day[i], format="%m/%d/%Y")
+}
+
+
+
 
 
