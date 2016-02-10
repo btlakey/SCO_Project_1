@@ -2,7 +2,7 @@ rm(list=ls())
 
 library('lpSolveAPI')
 
-##decision variables: (x1), ... , (x10) amount of each bond
+#decision variables: (x1), ... , (x10) amount of each bond
 #                    (z1), ... , (z7) excess cash at the end of each year
 
 #minimize: 102(x1) + 99(x2) + 101(x3) + 98(x4) + 98(x5) + 104(x6) + 100(x7) + 101(x8) + 102(x9) + 94(x10)

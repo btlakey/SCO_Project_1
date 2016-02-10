@@ -217,9 +217,10 @@ get.objective(new_port)
 ```
 
 ####Plotting duals versus libability period (analagous to date)
+The graph below shows the shadow prices for each of the 224 bonds by maturity period. The shadow price represents the increase in return from an additional purchase of a bond. We see a positive linear relationship between maturity and the duals, which makes sense because the further into the future a bond matures, the more coupons and return it will generate. For example, bond #224 has a maturity of 12/31/21 and a shadow price of 18.17. This means buying an additional unit of bond 224 would generate $18.17 more in return.
 ```{r}
 duals = get.dual.solution(new_port)
-plot(bonds$period[1:w],duals[1:w]) #need to remove z duals
+plot(bonds$period[1:w],duals[1:w], main="Duals by Maturity Period") #need to remove z duals
 ```
 
 
