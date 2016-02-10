@@ -6,8 +6,6 @@ output: html_document
 ---
 
 
-
-
 ##**PROBLEM 1**
 ####Formulate the dedicated portfolio construction problem as a linear program  
 
@@ -221,10 +219,10 @@ get.objective(new_port)
 
 duals = get.dual.solution(new_port)
 sensitivity = get.sensitivity.rhs(new_port)
-dual.df = data.frame(sensitivity$duals,sensitivity$dualsfrom,sensitivity$dualstill)
+dual_df = data.frame(sensitivity$duals,sensitivity$dualsfrom,sensitivity$dualstill)
 
-liab_duals = dual.df[1:12,]
-bond_duals = dual.df[13:235,]
+liab_duals = dual_df[1:12,]
+bond_duals = dual_df[13:235,]
 
 ```
 
