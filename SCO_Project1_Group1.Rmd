@@ -2,7 +2,7 @@
 title: "SCO_Project1_Group1"
 author: "Brian Lakey, Reshma Sekar, Julia Wu, Carlton Washburn"
 date: "February 10, 2016"
-output: html_document
+output: pdf_document
 ---
 
 
@@ -139,9 +139,7 @@ get.objective(old_port)
 
 ```{r}
 setwd("C:/Users/brian/Desktop/MS-BA/03 Spring Semester/Stochastic Control and Optimization/sco_project 1")
-bonds = read.csv('treasury_bonds.csv', header=TRUE) # we creted a csv document containing all of the
-                  # important bond fields from the provided website
-#names(bonds)
+bonds = read.csv('treasury_bonds.csv', header=TRUE) # we creted a csv document containing all of the important bond fields from the provided website
 ```
 
   
@@ -171,21 +169,21 @@ portfolio_dates = c(start_date,liability_dates)
 Goal is to have list of maturity due periods (numbering 1-12), similar to format given in example portfolio
 ```{r}
 bonds['period'] = NaN
-for (i in c(1:nrow(bonds))) {
+for (i in c(1:nrow(bonds))) { #check each bond
   k=1
   while (k <= length(portfolio_dates)) {
-    if (bonds$Matur_Date[i] < portfolio_dates[k]) {
-      bonds$period[i] = k-1
-      k = length(portfolio_dates)+1
+    if (bonds$Matur_Date[i] < portfolio_dates[k]) { # against each liability date until the maturity date exceeds the liability date
+      bonds$period[i] = k-1 # assign that bond to the previous period
+      k = length(portfolio_dates)+1  # exit loop
     } else {
-      k = k+1
+      k = k+1 
     }
   }
 }
 ```
 
 
-####Trim all bonds maturing after last liability date
+####Remove all bonds maturing after last liability date
 ```{r}
 w = sum(!is.na(bonds$period)) # find number of bonds that mature during project 
 ```
@@ -198,20 +196,32 @@ mm = bonds$period[1:w] #maturity
 ll = c(9000000,9000000,10000000,10000000,6000000,6000000,9000000,9000000,10000000,10000000,5000000,3000000) #liabilities (RHS)
 
 new_port = dedicate_g1(pp,cc,mm,ll)
-#sum(l) #pv of liabilities = $96,000,000
-#optimal portfolio = $74,042,228
-
 solve(new_port)
 ```
 
-Last 11 variables are zs - excess cash carried over
+  
+The chart below specifies how much and of which bonds the portfolio should invest in.  The last 11 variables are excess cash carried over, indicating that approximately $4.7m should be carried over from period 10 to 11.
 ```{r}
 get.variables(new_port)
 ```
 
-Savings of $21,957,772 (ignoring interest/time value of money)
+  
+The table below is a more condensed version of the investment strategy:
+```{r}
+bond_list = get.variables(new_port)[1:w]
+buy_bonds = matrix(NaN, length(which(bond_list!=0)), 2)
+colnames(buy_bonds) = c("bond", "amount")
+buy_bonds[,1] = which(bond_list!=0)
+buy_bonds[,2] = bond_list[which(bond_list!=0)]
+buy_bonds
+```
+
+  
+Savings (below) of $21,957,772 (ignoring interest/time value of money)
 ```{r}
 get.objective(new_port)
+#sum(l) #pv of liabilities = $96,000,000
+#optimal portfolio = $74,042,228
 ```
 
 ####Plotting bond and liability duals versus libability period (analagous to date)
@@ -226,18 +236,18 @@ bond_duals = dual_df[13:235,]
 
 ```
 
-The graph below shows the shadow prices for each of the 224 bonds by maturity period. The shadow price represents the increase in the objective value from an additional purchase of a bond. We see a positive linear relationship between maturity and the duals, which makes sense because the further into the future a bond matures, the more coupons it will generate and the more expensive it is. For example, bond #1 has a maturity of 2/15/2016 and a shadow price of 8.05. This means buying an additional unit of bond 1 would increase the objective value by 8.05.
+  
+The graph below shows the shadow prices for each of the 223 bonds by maturity period. The shadow price represents the increase in the objective value (cost of the portfolio) from a purchase of an additional bond. We see a positive relationship between maturity period and the duals, such that buying additional bonds with later maturity dates has a greater impact on the total portfolio cost than buying bonds with shorter term maturities.
+
+This makes sense, because the further into the future a bond matures, the more coupons it will generate and the more expensive it is. For example, bond #1 has a maturity of 2/15/2016 and a shadow price of 8.05. This means buying an additional unit of bond 1 would increase the objective value by 8.05.  Buying an additional bond that matures in a later period would increase the objective value by a greater amount.
 ```{r}
-
 plot(mm, bond_duals$sensitivity.duals, main="Bond Duals by Maturity Period")
-
 ```
 
-Looking at liability duals by maturity shows a negative linear relationship. The first liability has a shadow price of 0.92 which means that an increase in the first constraint by $1 requires a $0.92 increase in the objective value. Shadow prices fall as maturity dates rise because there is more time to accumulate return to cover the liability.
+  
+Looking at liability duals by maturity shows a negative linear relationship. The first liability has a shadow price of 0.92, which means that an increase in the first liability by $1 requires a $0.92 increase in the objective value, or cost of the portfolio. Shadow prices fall as maturity dates rise because there is more time to accumulate return to cover the liability.
 ```{r}
-
 plot(c(1:12), liab_duals$sensitivity.duals, main="Liability Duals by Maturity Period")
-
 ```
 
 
